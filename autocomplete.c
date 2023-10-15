@@ -316,7 +316,7 @@ int main(){
 
     char str[10000];
     char word[1000];
-
+    int len=0;
     memset(str, '\0',10000); 
     memset(word, '\0',1000); 
 
@@ -327,13 +327,12 @@ int main(){
 
         if(ch == 27)exit(0);
         if(ch == 8 ){
-            getch();
+            // getch();
             // if(strlen(str)>0)str[strlen(str)-1] = '\0';
-            // printf("Press %d",strlen(word));
-            
-            if(strlen(word)>0)
-                word[strlen(word)-1] ='\0';
-            // strcpy(word,word);
+
+            if(len>0) {word[len-1] ='\0';len--;}
+            // printf("Press %s %d",word,strlen(word));
+            // strcpy(word,word); 
             
         }
 
@@ -349,11 +348,12 @@ int main(){
             char strtemp[2];
             strtemp[0]=ch;
             if(ch==32){
+                len=0;
                 strcat(str," " );
                 strcat(str,word );
-                memset(word, 0,1000); 
+                memset(word,'\0',1000); 
             }
-            else strcat(word,strtemp);
+            else {strcat(word,strtemp);len++;}
         }
 
 
@@ -363,24 +363,13 @@ int main(){
         COL_GREEN
         printf("|");
         COL_RED
-        printf("\n\nCurrword : %s   %d",word,strlen(word));
+        // printf("\n\nCurrword : %s%d",word,strlen(word));
         char copywod[MAXLEN];
         strcpy(copywod,word);
         tolowercase(copywod);
         getCompletions(root,copywod);
 
     }
-
-    // pushW("a");
-    // pushW("b");
-    // pushW("c");
-    // pushW("d");
-    // pushW("e");
-
-    // while(!isEmptyW()){
-    //     printf("%s",popW());
-    // }
-    
 
 
     return 0;
