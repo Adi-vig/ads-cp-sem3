@@ -3,7 +3,13 @@
 #include<stdbool.h>
 #include<ctype.h>
 #include<stdlib.h>
-#define MAX 999
+
+#define COL_GREEN  printf("\e[0;32m");
+#define COL_RED    printf("\e[0;31m");
+#define COL_WHITE  printf("\e[0;37m");
+#define COL_YELLOW printf("\e[0;33m");
+
+#define MAX 1000
 #define MAXLEN 1000
 
 // random ass line
@@ -16,6 +22,8 @@ typedef struct node{
     bool isWord;
 
 } Node;
+
+char suggestions[MAX][MAXLEN];
 
 
 
@@ -62,7 +70,9 @@ bool isEmptyN(){
 }
 
 
-
+int minI(int a, int b){
+    return (a < b)?a:b;
+}
 
 
 
@@ -221,7 +231,7 @@ char* getCompletions(Node* root, char word[MAXLEN]) {
     int  found=-1;
     char wordsFound[MAX][MAXLEN];
 
-    while (!isEmptyN()){
+    while (!isEmptyN() ){
         currentNode = topN();
         popN();
         // prefix = prefixes.top();
@@ -234,7 +244,7 @@ char* getCompletions(Node* root, char word[MAXLEN]) {
             char strtemp[2];
             strtemp[0]=currentNode->ch;
             strcat(prefix,strtemp );
-            strcpy(wordsFound[++found], prefix );
+            if(found < MAX-1)strcpy(wordsFound[++found], prefix );
         }
         else {
             char strtemp[2];
@@ -242,7 +252,7 @@ char* getCompletions(Node* root, char word[MAXLEN]) {
             strcat(prefix,strtemp );
             
                 if (currentNode->isWord){
-                    strcpy(wordsFound[++found], prefix );
+                    if(found < MAX-1)strcpy(wordsFound[++found], prefix );
                 }
 
             // Check all children for completions
@@ -261,14 +271,23 @@ char* getCompletions(Node* root, char word[MAXLEN]) {
     // allWords << "\n";
     // return allWords.str();
     // 
-    printf("\n---------Suggestions---------- \n");
-    for(int i = 0; i <found; i++){
-        printf("%s\n", wordsFound[i]);
+    printf("\n---------Suggestions---------- %d \n",found);
+    
+    for(int i = 0; i <minI(10,found); i++){
+        printf("%d. %s\n",(i+1)%10 ,wordsFound[i]);
+        strcpy(suggestions[i],wordsFound[i]);
     }
     return "sd";
 }
 
+void tolowercase(char buff[MAXLEN]){
+    for(int i = 0; i < MAXLEN; i++){
+        if(buff[i]>='A' && buff[i]<'Z'){
+            buff[i]= 'a' + buff[i]-'A';
+        }
 
+    }
+}
 
 
 
@@ -284,12 +303,73 @@ int main(){
     // char a='5';
     // char arr[]={4,a,'\0'};
     // printf("%s\n",arr);
-    char buff[MAXLEN];
-    // strcpy(buff,"compli");
-    printf("\nEnter random word to complete\n");
-    scanf("%s",buff);
+    // char buff[MAXLEN];
+    // // strcpy(buff,"compli");
+    // printf("\nEnter random word to complete\n");
+    // scanf("%s",buff);
 
-    getCompletions(root,buff);
+    // tolowercase(buff);
+
+    // getCompletions(root,buff);
+
+    // printf("\n\nCompleted suggesting \n");
+
+    char str[10000];
+    char word[1000];
+
+    memset(str, '\0',10000); 
+    memset(word, '\0',1000); 
+
+    while(1){
+        char ch = getch();
+        system("cls");
+        printf("PRESS Esc to exit ... input : %d %c",ch,ch);
+
+        if(ch == 27)exit(0);
+        if(ch == 8 ){
+            getch();
+            // if(strlen(str)>0)str[strlen(str)-1] = '\0';
+            // printf("Press %d",strlen(word));
+            
+            if(strlen(word)>0)
+                word[strlen(word)-1] ='\0';
+            // strcpy(word,word);
+            
+        }
+
+        if(ch >='0' && ch <= '9'){
+            memset(word, 0,1000);
+            if(ch-'0'-1 >= 0)strcpy(word, suggestions[(ch-'0'-1)%10]);
+            else strcpy(word, suggestions[9]);
+
+        }
+        
+        else{
+            // any key else than num back and esc
+            char strtemp[2];
+            strtemp[0]=ch;
+            if(ch==32){
+                strcat(str," " );
+                strcat(str,word );
+                memset(word, 0,1000); 
+            }
+            else strcat(word,strtemp);
+        }
+
+
+        COL_WHITE
+        printf("\n\nType: %s",str);
+        printf(" %s",word);
+        COL_GREEN
+        printf("|");
+        COL_RED
+        printf("\n\nCurrword : %s   %d",word,strlen(word));
+        char copywod[MAXLEN];
+        strcpy(copywod,word);
+        tolowercase(copywod);
+        getCompletions(root,copywod);
+
+    }
 
     // pushW("a");
     // pushW("b");
