@@ -271,7 +271,7 @@ char* getCompletions(Node* root, char word[MAXLEN]) {
     // allWords << "\n";
     // return allWords.str();
     // 
-    printf("\n---------Suggestions---------- %d \n",found);
+    printf("\n---------Suggestions----------  %d \n",found);
     
     for(int i = 0; i <minI(10,found); i++){
         printf("%d. %s\n",(i+1)%10 ,wordsFound[i]);
@@ -316,58 +316,68 @@ int main(){
 
     char str[10000];
     char word[1000];
-    int len=0;
+
     memset(str, '\0',10000); 
     memset(word, '\0',1000); 
 
     while(1){
         char ch = getch();
         system("cls");
-        printf("PRESS Esc to exit ... input : %d %c",ch,ch);
+        printf("PRESS Esc to exit / type like you usually do... ");
+        // printf("PRESS Esc to exit ... input : %d %c",ch,ch);
 
         if(ch == 27)exit(0);
         if(ch == 8 ){
             // getch();
+            // fflush(stdin);
+            // getch();
             // if(strlen(str)>0)str[strlen(str)-1] = '\0';
-
-            if(len>0) {word[len-1] ='\0';len--;}
+            // char temp[1000];
+            // strcpy(temp,word);
+            if(strlen(word)>0) word[strlen(word)-1] ='\0';
             // printf("Press %s %d",word,strlen(word));
-            // strcpy(word,word); 
+            // strcpy(word,temp); 
             
         }
 
-        if(ch >='0' && ch <= '9'){
+        else if(ch >='0' && ch <= '9'){
             memset(word, 0,1000);
             if(ch-'0'-1 >= 0)strcpy(word, suggestions[(ch-'0'-1)%10]);
             else strcpy(word, suggestions[9]);
-
         }
         
         else{
             // any key else than num back and esc
+            // printf("\n\n\nthis workdeddadaa");
             char strtemp[2];
             strtemp[0]=ch;
             if(ch==32){
-                len=0;
                 strcat(str," " );
                 strcat(str,word );
                 memset(word,'\0',1000); 
             }
-            else {strcat(word,strtemp);len++;}
+            else strcat(word,strtemp);
+                
         }
 
 
         COL_WHITE
         printf("\n\nType: %s",str);
-        printf(" %s",word);
         COL_GREEN
-        printf("|");
+        printf(" %s",word);
+        
         COL_RED
+        printf("| ");
         // printf("\n\nCurrword : %s%d",word,strlen(word));
+        // printf("\n\nCurrword : %s",word);
+
+        printf("\n\nPress keys 0-9 to autocomplete:\n");
+        COL_YELLOW
         char copywod[MAXLEN];
         strcpy(copywod,word);
         tolowercase(copywod);
         getCompletions(root,copywod);
+        COL_GREEN
 
     }
 
