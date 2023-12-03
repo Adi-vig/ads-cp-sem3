@@ -110,14 +110,13 @@ Node* insert(Node* root, char word[]){
         // convert to lower case
         currentLetter = (char)tolower((int)word[i]);
 
-        // Shift index, ascci table: https://www.cs.cmu.edu/~pattis/15-1XX/common/handouts/ascii.html
-        letterIndex = (int)currentLetter - 97;
+        letterIndex = (int)currentLetter - 97; //'a'
 
         // We only accept letters
         if (letterIndex < 0 || letterIndex > 25) break;
 
         if (currNode->child[letterIndex]){
-            // Do nothing
+            // Do nothing .. node already exists
         }
         else {
             // Create new node
@@ -152,7 +151,7 @@ Node* insertDictionary(Node *root) {
             // if(count == 30) break;
 
         }
-        printf("%ld", count);
+        printf("%ld ", count);
 
         fclose(file);
     }
@@ -208,6 +207,7 @@ Node* getNode(Node* root,char substring[]) {
 char* getCompletions(Node* root, char word[MAXLEN]) {
     char copywod[MAXLEN];
     strcpy(copywod,word);
+    printf("\nincoming word : %s", copywod);
     Node* parentNode = getNode(root,copywod);
     if (parentNode == NULL || parentNode->ch != word[strlen(word) - 1]) return "";
 
@@ -215,19 +215,22 @@ char* getCompletions(Node* root, char word[MAXLEN]) {
     char prefix[MAXLEN];
     // stack<node>tovisit
     pushN(parentNode);
+    printf("\npushed node with ch : %c",parentNode->ch);
+
 
     // each node in toVisit has a corresponding prefix in prefixes
 
 
     // Remove last letter from word so that it is not repeated
-    // word = word.substr(0, strlen(word) - 1);
+
     word[strlen(word) - 1] ='\0';
-    // std::stack<std::string> prefixes;
+
 
     pushW(word);
+    printf("\npushed word : %s", word);
 
 
-    // std::vector<std::string> wordsFound;
+
     int  found=-1;
     char wordsFound[MAX][MAXLEN];
 
@@ -256,10 +259,12 @@ char* getCompletions(Node* root, char word[MAXLEN]) {
                 }
 
             // Check all children for completions
-            for (int i = 0; i < 26; i++) {
+            for (int i = 25; i >=0; i--) {
                 if (currentNode->child[i] != NULL){
                     pushN(currentNode->child[i]);
                     pushW(prefix);
+                    // printf("\npushed prefix : %s", prefix);
+
                 }
             }   
         }
@@ -328,6 +333,8 @@ int main(){
 
         if(ch == 27)exit(0);
         if(ch == 8 ){
+            // backspace
+
             // getch();
             // fflush(stdin);
             // getch();
@@ -352,6 +359,7 @@ int main(){
             char strtemp[2];
             strtemp[0]=ch;
             if(ch==32){
+                // SPACE
                 strcat(str," " );
                 strcat(str,word );
                 memset(word,'\0',1000); 
