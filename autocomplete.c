@@ -218,6 +218,7 @@ char* getCompletions(Node* root, char word[MAXLEN]) {
     Node* parentNode = getNode(root,copywod);
     if (parentNode == NULL || parentNode->ch != word[strlen(word) - 1]){
         printf("\n!!! NO SUGGESTIONS FOUND FOR %s ..... so adding to dictionary \n",word);
+        return "";
     }
 
     Node* currentNode;
