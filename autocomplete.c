@@ -47,6 +47,10 @@ char* popW(){
 bool isEmptyW(){
     return (tos2 < 0);
 }
+void clearW(){
+    tos2=-1;
+}
+
 
 
 
@@ -67,6 +71,9 @@ Node* popN(){
 }
 bool isEmptyN(){
     return (tos1 < 0);
+}
+void clearN(){
+    tos1=-1;
 }
 
 
@@ -209,54 +216,61 @@ char* getCompletions(Node* root, char word[MAXLEN]) {
     strcpy(copywod,word);
     printf("\nincoming word : %s", copywod);
     Node* parentNode = getNode(root,copywod);
-    if (parentNode == NULL || parentNode->ch != word[strlen(word) - 1]) return "";
+    if (parentNode == NULL || parentNode->ch != word[strlen(word) - 1]){
+        printf("\n!!! NO SUGGESTIONS FOUND FOR %s ..... so adding to dictionary \n",word);
+    }
 
     Node* currentNode;
     char prefix[MAXLEN];
     // stack<node>tovisit
+    clearN();
+    clearW();
+
     pushN(parentNode);
     printf("\npushed node with ch : %c",parentNode->ch);
 
 
-    // each node in toVisit has a corresponding prefix in prefixes
 
 
     // Remove last letter from word so that it is not repeated
 
-    word[strlen(word) - 1] ='\0';
-
-
-    pushW(word);
-    printf("\npushed word : %s", word);
 
 
 
     int  found=-1;
     char wordsFound[MAX][MAXLEN];
 
+
+    
+    word[strlen(word) - 1] ='\0';       // the prefix for adity is adit 
+
+
+    pushW(word);
+    printf("\npushed word : %s", word);
+
     while (!isEmptyN() ){
+        // if(found == 10)break;
         currentNode = topN();
         popN();
         // prefix = prefixes.top();
         strcpy(prefix, topW() );
-
-        // prefixes.pop();
         popW();
 
         if (isLeaf(currentNode)){
             char strtemp[2];
+
             strtemp[0]=currentNode->ch;
             strcat(prefix,strtemp );
             if(found < MAX-1)strcpy(wordsFound[++found], prefix );
         }
         else {
-            char strtemp[2];
+            char strtemp[2]={0,0};
             strtemp[0]=currentNode->ch;
             strcat(prefix,strtemp );
             
-                if (currentNode->isWord){
-                    if(found < MAX-1)strcpy(wordsFound[++found], prefix );
-                }
+            if (currentNode->isWord){
+                if(found < MAX-1)strcpy(wordsFound[++found], prefix );
+            }
 
             // Check all children for completions
             for (int i = 25; i >=0; i--) {
@@ -276,12 +290,16 @@ char* getCompletions(Node* root, char word[MAXLEN]) {
     // allWords << "\n";
     // return allWords.str();
     // 
-    printf("\n---------Suggestions----------  %d \n",found);
+    printf("\n---------Suggestions---------- %d \n",found);
+
+    // if(found==0)
     
-    for(int i = 0; i <minI(10,found); i++){
+    for(int i = 0; i <=minI(10,found); i++){
         printf("%d. %s\n",(i+1)%10 ,wordsFound[i]);
         strcpy(suggestions[i],wordsFound[i]);
     }
+
+    
     return "sd";
 }
 
@@ -356,12 +374,16 @@ int main(){
         else{
             // any key else than num back and esc
             // printf("\n\n\nthis workdeddadaa");
-            char strtemp[2];
+            char strtemp[2]={0,0};
             strtemp[0]=ch;
             if(ch==32){
                 // SPACE
+
                 strcat(str," " );
+                
+                root=insert(root, word);
                 strcat(str,word );
+                // printf("innserting %s",word );
                 memset(word,'\0',1000); 
             }
             else strcat(word,strtemp);
